@@ -1,0 +1,10 @@
+server
+
+собрать - go build
+запустить - ./stats
+на localhost:8080
+
+запрос как GET localhost:8080/api/stats?board={board}
+
+client
+npm start
