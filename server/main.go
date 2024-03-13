@@ -29,13 +29,30 @@ func init() {
 		panic(err)
 	}
 
-	sosach := Daemon{
-		f: func() (*Record, error) {
-			return FetchSosach("b")
+	daemons := []Daemon{
+		// sosach daemons
+		{
+			f: func() (*Record, error) {
+				return FetchSosach("b")
+			},
+			table: "2ch.hk/b",
 		},
-		table: "2ch.hk/b",
+		{
+			f: func() (*Record, error) {
+				return FetchSosach("po")
+			},
+			table: "2ch.hk/po",
+		},
+		{
+			f: func() (*Record, error) {
+				return FetchSosach("vg")
+			},
+			table: "2ch.hk/vg",
+		},
 	}
-	go sosach.Run()
+	for i := range daemons {
+		go daemons[i].Run()
+	}
 }
 
 func logging(next echo.HandlerFunc) echo.HandlerFunc {
