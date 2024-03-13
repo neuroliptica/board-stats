@@ -8,7 +8,15 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-var db Database
+var (
+	db Database
+
+	AvaibleBoards = map[string]bool{
+		"2ch.hk/b":  true,
+		"2ch.hk/po": true,
+		"2ch.hk/vg": true,
+	}
+)
 
 func init() {
 	b, err := sql.Open("sqlite3", "stats.db")
@@ -61,7 +69,11 @@ func main() {
 			Error string `json:"error"`
 		}
 		board := c.QueryParam("board")
-		//check if exists
+		if ok := AvaibleBoards[board]; !ok {
+			return c.JSON(http.StatusNotFound, FailedResponse{
+				Error: "no such board to track",
+			})
+		}
 		res, err := db.GetBoardStats(board)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, FailedResponse{
